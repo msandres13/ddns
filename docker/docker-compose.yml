@@ -9,9 +9,11 @@ services:
     depends_on:
       - redis
     environment:
-      DDNS_DOMAIN: d.example.net
-      DDNS_SOA_DOMAIN: ddns.example.net
+      DDNS_DOMAIN: dyndns.andres.one
+      DDNS_SOA_DOMAIN: dyndns.andres.one
       DDNS_REDIS_HOST: redis:6379
+    ports:
+      - 8083:8080
 
   powerdns:
     restart: unless-stopped
@@ -22,7 +24,12 @@ services:
       - ddns
     environment:
       PDNS_REMOTE_HTTP_HOST: "ddns:8053"
+    ports:
+      - 53:53/udp
 
   redis:
     restart: unless-stopped
     image: redis:4-alpine
+    volumes:
+      - "${PWD}/.redis_mount:/data"
+
